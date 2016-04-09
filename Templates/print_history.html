@@ -1,0 +1,29 @@
+<!DOCTYPE html>
+<html lang="en"><head>
+<title>Previous Transactions</title>
+  </head>
+  <body>
+
+<form name="make_history_form" method="post" action="" onsubmit="return validate_exp()">
+{% csrf_token %}
+	 <br>
+{% for t in trans %}
+		<fieldset>
+		<legend><br></legend><li>Id:{{t.stud_id.stud_id}}</li>
+		<legend><br></legend><li>Name:{{t.stud_id.name}}</li>
+		<legend><br></legend><li>Sem:{{t.fee_id.sem}}</li>
+		<legend><br></legend><li>Fees:{{t.fee_id.fees}}</li>
+		<legend><br></legend><li>Time:{{t.pay_time}}</li>
+		<legend><br></legend><li>Transaction_id:{{t.trans_id}}</li>
+		</fieldset>
+	{% endfor %}
+
+
+	
+<br><br>
+
+	 </form> 
+	
+
+  </body>
+  </html>
