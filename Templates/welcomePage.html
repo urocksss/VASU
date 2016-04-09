@@ -1,0 +1,22 @@
+<!DOCTYPE html>
+<html lang="en" class="no-js">
+<head>
+</head>
+<body>
+<div id="st-container" class="st-container">
+    {% block content %}
+    <h1>Welcome {% stud_name %}</h1>
+    {% endblock %}
+    <form action="/history" method="POST">
+        {% csrf_token %}
+        <button type="submit">History</button>
+    </form>
+    <br>
+    <br>
+    <form action="/payfees" method="POST">
+        {% csrf_token %}
+        <button type="submit">Payfees</button>
+    </form>
+</div>
+</body>
+</html>

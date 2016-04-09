@@ -2,8 +2,6 @@ from django.contrib.auth.models import User
 from django.db import models
 
 # Create your models here.
-from django.http import request
-
 
 class StudentInfo(models.Model):
     stud_id = models.CharField(max_length=15, primary_key=True)
@@ -42,3 +40,7 @@ class TempTrans(models.Model):
     fee_id = models.ForeignKey(FeeStruct)
     pay_time = models.DateTimeField()
     unique_id=models.CharField(max_length=25)
+
+class MapUserStud(models.Model):
+    stud_id=models.OneToOneField(StudentInfo,related_name='stud_map')
+    user=models.OneToOneField(User,related_name='user_map')
