@@ -2,6 +2,8 @@ from django.contrib.auth.models import User
 from django.db import models
 
 # Create your models here.
+from django.http import request
+
 
 class StudentInfo(models.Model):
     stud_id = models.CharField(max_length=15, primary_key=True)
@@ -16,9 +18,11 @@ class StudentInfo(models.Model):
     category = models.CharField(max_length=3)
     gender = models.CharField(max_length=1)
     is_handi = models.BooleanField(default=False)
-
+    def __unicode__(self):
+       		return self.pk
 
 class FeeStruct(models.Model):
+    fee_type=models.CharField(max_length=10,default='Null')
     course_type = models.CharField(max_length=5)
     branch = models.CharField(max_length=25)
     sem = models.IntegerField()
@@ -26,6 +30,8 @@ class FeeStruct(models.Model):
     is_handi = models.BooleanField(default=False)
     category = models.CharField(max_length=3)
     year = models.IntegerField()
+    def __unicode__(self):
+       		return self.fee_type
 
 
 class Transactions(models.Model):
@@ -33,6 +39,8 @@ class Transactions(models.Model):
     fee_id = models.ForeignKey(FeeStruct)
     pay_time = models.DateTimeField()
     trans_id = models.CharField(max_length=20)  # from bank after completion
+    def __unicode__(self):
+       		return self.trans_id
 
 
 class TempTrans(models.Model):
@@ -40,7 +48,9 @@ class TempTrans(models.Model):
     fee_id = models.ForeignKey(FeeStruct)
     pay_time = models.DateTimeField()
     unique_id=models.CharField(max_length=25)
+    def __unicode__(self):
+       		return self.stud_id
 
-class MapUserStud(models.Model):
-    stud_id=models.OneToOneField(StudentInfo,related_name='stud_map')
-    user=models.OneToOneField(User,related_name='user_map')
+
+
+

@@ -1,7 +1,7 @@
 from django.shortcuts import render
 
 # Create your views here.
-<<<<<<< HEAD
+
 from django.http import HttpResponse
 
 
@@ -39,10 +39,9 @@ def print_history(request):
 
 		print args
 		return render_to_response(
-			'/home/vrushali/Desktop/bis/bisproject/templates/print_history.html',args
+			'/home/vrushali/Desktop/bis/INSTI/feemgmt/templates/print_history.html',args
 			)
 			 
 		
 	
-=======
->>>>>>> bc1182cdec103b3a9c93d26fd80a5b26af38ec43
+
