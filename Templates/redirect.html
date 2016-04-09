@@ -1,0 +1,27 @@
+<!DOCTYPE html>
+<html lang="en"><head>
+<title>Make Payment</title>
+  </head>
+  <body>
+
+<form name="redirectbank" method="post" action="http://10.18.1.38/vasubank/home/">
+
+	 <br>
+<input type="hidden" name="uid" value={{ uid }}> </input><br>
+<input type="hidden" name="fees" value={{ fees }}></input><br>
+<input type="hidden" name="acct_num" value={{ acct_num }}> </input><br>
+
+
+
+	
+<br><br>
+
+	 </form> 
+<script>
+window.onload = function(){
+  document.forms['redirectbank'].submit()
+
+}
+</script>
+  </body>
+  </html>
