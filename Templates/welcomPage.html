@@ -5,15 +5,15 @@
 <body>
 <div id="st-container" class="st-container">
     {% block content %}
-    <h1>Welcome {% stud_name %}</h1>
+    <h1>Welcome {{ stud_name }}</h1>
     {% endblock %}
-    <form action="/history" method="POST">
+    <form action="/insti/print_history/" method="POST">
         {% csrf_token %}
         <button type="submit">History</button>
     </form>
     <br>
     <br>
-    <form action="/payfees" method="POST">
+    <form action="/insti/pay_fee/" method="POST">
         {% csrf_token %}
         <button type="submit">Payfees</button>
     </form>
