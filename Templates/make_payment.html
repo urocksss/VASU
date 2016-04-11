@@ -3,17 +3,16 @@
 <title>Make Payment</title>
   </head>
   <body>
-
-{% csrf_token %}
-<form name="make_payment_form" method="post" action="" onsubmit="return validate_exp()">
-{% csrf_token %}
+  Name:{{ student.name }}
+  Id:{{ student.id }}
+  Sem:{{ sem }}
+  Email:{{ student.email }}
+  Fees:{{ feeid.fees }}
+  <form name="make_payment_form" method="POST" action="">
+      {% csrf_token %}
 	 <br>
-Name:<input type="text" name="name"> </input><br>
-Id:<input type="text" name="id"></input><br>
-Sem:<input type="text" name="sem"> </input><br>
-Email:<input type="text" name="email"> </input><br>
 
-<input type="submit" name="submit" value="Make payment" />
+      <button type="submit" name="submit" value="Make payment"/>
 	
 <br><br>
 

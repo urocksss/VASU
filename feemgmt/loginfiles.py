@@ -11,8 +11,9 @@ class LoginForm(forms.Form):
 
 
 def LoginRequest(request):
-    # if request.user.is_authenticated():
-    #     return HttpResponse('<script type="text/javascript">window.opener.location.reload(false);</script>')
+    if request.user.is_authenticated():
+        return render_to_response('welcomPage.html', {'stud_name': request.user.user_map.stud_id.name},
+                                  context_instance=RequestContext(request))
     if request.method == 'POST':
         form = LoginForm(request.POST)
         if form.is_valid():

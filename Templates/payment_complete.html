@@ -1,0 +1,23 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <title>Make Payment</title>
+</head>
+<body>
+Name:{{ student.name }}
+Id:{{ student.id }}
+Sem:{{ sem }}
+Email:{{ student.email }}
+Fees:{{ feeid.fees }}
+Transaction Id:{{ t_id }}
+{% block content %}
+{% if status == 2 %}
+<p>Your fees payment for this semister is complete</p>
+{% else %}
+<p>Your Transaction has Failled!!!</p>
+{% endif %}
+{% endblock %}
+
+
+</body>
+</html>
