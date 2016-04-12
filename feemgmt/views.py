@@ -17,6 +17,8 @@ from django.shortcuts import render_to_response
 
 
 # Create your views here.
+def clg_key():
+    return 'VNIT'
 
 def randomword():
     choose = "qwertyuiopasdfghjklzxcvbnm1234567890AQWSEDRFTGYHUJIKOLPZXCVBNM"
@@ -67,11 +69,10 @@ def make_payment(request):
                         interface_object.save()
                         print(unique_id)
 
-                        clg_key='VNIT'
                         m = hashlib.sha512()
                         m.update(str(unique_id).encode('utf-8'))
                         m.update(str(fee_id.fees).encode('utf-8'))
-                        m.update(str(clg_key).encode('utf-8'))
+                        m.update(str(clg_key()).encode('utf-8'))
                         # context = {"uid": unique_id, "fees": fee_id.fees, "college_id": clg_key, }
                         # data = urllib.urlencode({"uid":unique_id,"fees":fee_id.fees,"acct_num":"123456789"})
                         # u = urllib.urlopen("http://google.com/", data)
@@ -116,7 +117,7 @@ def make_payment(request):
                     args.update(csrf(request))
                     return render_to_response('make_payment.html', args)
             else:
-                return render_to_response('error.html', {'reason': 'student doesnot exist'})
+                return render_to_response('error.html', {'reason': 'student does not exist'})
         else:
             print("in get566")
             args = {}
@@ -129,24 +130,32 @@ def TransactionComplete(request):
     # if request.user.is_authenticated():
     id = request.POST.get('uid')
     status = request.POST.get('status')
-    print(id + status)
-    temp_trans_obj = TempTrans.objects.filter(unique_id=id)[0]
-    # login(request, temp_trans_obj.stud_id.stud_map.user)
-    if int(status) == 2:
-        t_id = request.POST.get('t_id')
-        Transactions(stud_id=temp_trans_obj.stud_id,
-                     fee_id=temp_trans_obj.fee_id,
-                     pay_time=temp_trans_obj.pay_time,
-                     trans_id=t_id).save()
-    student = temp_trans_obj.stud_id
-    sem = ceil((diff_month(datetime.datetime.today(), student.date_of_joining) / 6) + 1)
-    print("sem:")
-    print(sem)
-    print("year:")
-    print(datetime.datetime.today().year)
-    fee_id = FeeStruct.objects.filter(course_type=student.course_type, sem=sem,
-                                      is_handi=student.is_handi,
-                                      year=datetime.datetime.today().year)[0]
-    args = {"status": int(status), "t_id": t_id, 'student': student, 'fee_id': fee_id, 'sem': sem}
-    temp_trans_obj.delete()
-    return render_to_response('payment_complete.html', args, context_instance=RequestContext(request))
+    t_id = request.POST.get('t_id')
+    hush = request.POST.get('hash')
+    m = hashlib.sha512()
+    m.update(status.encode('utf-8'))
+    m.update(id.encode('utf-8'))
+    m.update(t_id.encode('utf-8'))
+    m.update(clg_key().encode('utf-8'))
+    if str(hush) == str(m.hexdigest()):
+        temp_trans_obj = TempTrans.objects.filter(unique_id=id)[0]
+        # login(request, temp_trans_obj.stud_id.stud_map.user)
+        if int(status) == 2:
+            Transactions(stud_id=temp_trans_obj.stud_id,
+                         fee_id=temp_trans_obj.fee_id,
+                         pay_time=temp_trans_obj.pay_time,
+                         trans_id=t_id).save()
+        student = temp_trans_obj.stud_id
+        sem = ceil((diff_month(datetime.datetime.today(), student.date_of_joining) / 6) + 1)
+        print("sem:")
+        print(sem)
+        print("year:")
+        print(datetime.datetime.today().year)
+        fee_id = FeeStruct.objects.filter(course_type=student.course_type, sem=sem,
+                                          is_handi=student.is_handi,
+                                          year=datetime.datetime.today().year)[0]
+        args = {"status": int(status), "t_id": t_id, 'student': student, 'fee_id': fee_id, 'sem': sem}
+        temp_trans_obj.delete()
+        return render_to_response('payment_complete.html', args, context_instance=RequestContext(request))
+    else :
+        return render_to_response('confirm_payment_with_bank.html')
