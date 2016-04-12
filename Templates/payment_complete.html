@@ -4,12 +4,12 @@
     <title>Make Payment</title>
 </head>
 <body>
-Name:{{ student.name }}
-Id:{{ student.id }}
-Sem:{{ sem }}
-Email:{{ student.email }}
-Fees:{{ feeid.fees }}
-Transaction Id:{{ t_id }}
+Name:{{ student.name }}<br>
+Id:{{ student.id }}<br>
+Sem:{{ sem }}<br>
+Email:{{ student.email }}<br>
+Fees:{{ fees }}<br>
+Transaction Id:{{ t_id }}<br>
 {% block content %}
 {% if status == 2 %}
 <p>Your fees payment for this semister is complete</p>

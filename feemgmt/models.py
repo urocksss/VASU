@@ -32,7 +32,7 @@ class Transactions(models.Model):
     stud_id = models.ForeignKey(StudentInfo)
     fee_id = models.ForeignKey(FeeStruct)
     pay_time = models.DateTimeField()
-    trans_id = models.CharField(max_length=20)  # from bank after completion
+    trans_id = models.CharField(max_length=25)  # from bank after completion
 
 
 class TempTrans(models.Model):

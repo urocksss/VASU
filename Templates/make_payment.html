@@ -3,11 +3,12 @@
 <title>Make Payment</title>
   </head>
   <body>
+
   Name:{{ student.name }}
   Id:{{ student.id }}
   Sem:{{ sem }}
   Email:{{ student.email }}
-  Fees:{{ feeid.fees }}
+  Fees:{{ fees }}
   <form name="make_payment_form" method="POST" action="">
       {% csrf_token %}
 	 <br>

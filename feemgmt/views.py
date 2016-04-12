@@ -1,3 +1,4 @@
+import hashlib
 import random
 
 # Create your views here.
@@ -55,7 +56,7 @@ def make_payment(request):
                 print("year:")
                 print(datetime.datetime.today().year)
                 fee_id = FeeStruct.objects.filter(course_type=student.course_type, sem=sem,
-                                                  is_handi=student.is_handi, category=student.category,
+                                                  is_handi=student.is_handi,
                                                   year=datetime.datetime.today().year).first()
                 pay_time = datetime.datetime.now()
                 unique_id = randomword()
@@ -65,9 +66,17 @@ def make_payment(request):
                                                      unique_id=unique_id)
                         interface_object.save()
                         print(unique_id)
+
+                        clg_key='VNIT'
+                        m = hashlib.sha512()
+                        m.update(str(unique_id).encode('utf-8'))
+                        m.update(str(fee_id.fees).encode('utf-8'))
+                        m.update(str(clg_key).encode('utf-8'))
+                        # context = {"uid": unique_id, "fees": fee_id.fees, "college_id": clg_key, }
                         # data = urllib.urlencode({"uid":unique_id,"fees":fee_id.fees,"acct_num":"123456789"})
                         # u = urllib.urlopen("http://google.com/", data)
-                        context = {"uid": unique_id, "fees": fee_id.fees, "college_id": "VNIT"}
+                        print(m.hexdigest())
+                        context = {"uid": unique_id, "fees": fee_id.fees, "college_id":clg_key,"hash": str(m.hexdigest())}
                         print("proceeding for transaction")
                         return render_to_response('redirect.html', context, context_instance=RequestContext(request))
                     else:
@@ -96,11 +105,16 @@ def make_payment(request):
                 print("year:")
                 print(datetime.datetime.today().year)
                 fee_id = FeeStruct.objects.filter(course_type=student.course_type, sem=sem,
-                                                  is_handi=student.is_handi, category=student.category,
+                                                  is_handi=student.is_handi,
                                                   year=datetime.datetime.today().year).first()
                 args = {'student': student, 'fee_id': fee_id, 'sem': sem}
-                args.update(csrf(request))
-                return render_to_response('make_payment.html', args)
+                trans=Transactions.objects.filter(stud_id=student,fee_id=fee_id)
+                if trans.exists():
+                    args={'trans':trans,'message':'You have already Paid your fees. Here are transaction details'}
+                    return render_to_response('print_history.html', args)
+                else:
+                    args.update(csrf(request))
+                    return render_to_response('make_payment.html', args)
             else:
                 return render_to_response('error.html', {'reason': 'student doesnot exist'})
         else:
@@ -131,7 +145,7 @@ def TransactionComplete(request):
     print("year:")
     print(datetime.datetime.today().year)
     fee_id = FeeStruct.objects.filter(course_type=student.course_type, sem=sem,
-                                      is_handi=student.is_handi, category=student.category,
+                                      is_handi=student.is_handi,
                                       year=datetime.datetime.today().year)[0]
     args = {"status": int(status), "t_id": t_id, 'student': student, 'fee_id': fee_id, 'sem': sem}
     temp_trans_obj.delete()

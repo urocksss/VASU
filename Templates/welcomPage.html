@@ -17,6 +17,10 @@
         {% csrf_token %}
         <button type="submit">Payfees</button>
     </form>
+    <form action="/insti/logout/" method="POST">
+        {% csrf_token %}
+        <button type="submit">Logout</button>
+    </form>
 </div>
 </body>
 </html>
