@@ -14,7 +14,8 @@ from django.views.decorators.csrf import csrf_exempt
 
 from feemgmt.models import *
 from django.shortcuts import render_to_response
-
+from Crypto.Hash import SHA512
+from . import bank_public_key,key
 
 # Create your views here.
 def clg_key():
@@ -68,16 +69,19 @@ def make_payment(request):
                                                      unique_id=unique_id)
                         interface_object.save()
                         print(unique_id)
-
-                        m = hashlib.sha512()
-                        m.update(str(unique_id).encode('utf-8'))
-                        m.update(str(fee_id.fees).encode('utf-8'))
-                        m.update(str(clg_key()).encode('utf-8'))
+                        uuid=bank_public_key.encrypt(str(unique_id),32)
+                        fee=bank_public_key.encrypt(str(fee_id.fees),32)
+                        c_key=bank_public_key.encrypt(str(clg_key()),32)
+                        m = SHA512.new()
+                        m.update(uuid.encode('utf-8'))
+                        m.update(fee.encode('utf-8'))
+                        m.update(c_key.encode('utf-8'))
                         # context = {"uid": unique_id, "fees": fee_id.fees, "college_id": clg_key, }
                         # data = urllib.urlencode({"uid":unique_id,"fees":fee_id.fees,"acct_num":"123456789"})
                         # u = urllib.urlopen("http://google.com/", data)
-                        print(m.hexdigest())
-                        context = {"uid": unique_id, "fees": fee_id.fees, "college_id":clg_key,"hash": str(m.hexdigest())}
+                        hash=m.hexdigest()
+                        signature=key.sign(hash,'')
+                        context = {"uid": unique_id, "fees": fee_id.fees, "college_id":clg_key,"hash": signature}
                         print("proceeding for transaction")
                         return render_to_response('redirect.html', context, context_instance=RequestContext(request))
                     else:
@@ -131,13 +135,17 @@ def TransactionComplete(request):
     id = request.POST.get('uid')
     status = request.POST.get('status')
     t_id = request.POST.get('t_id')
-    hush = request.POST.get('hash')
-    m = hashlib.sha512()
+    signature = request.POST.get('hash')
+    m = SHA512.new()
     m.update(status.encode('utf-8'))
     m.update(id.encode('utf-8'))
     m.update(t_id.encode('utf-8'))
     m.update(clg_key().encode('utf-8'))
-    if str(hush) == str(m.hexdigest()):
+    hash=m.hexdigest()
+    if bank_public_key.verify(hash,signature):
+        id=key.decrypt(id)
+        status=key.decrypt(status)
+        t_id=key.decrypt(t_id)
         temp_trans_obj = TempTrans.objects.filter(unique_id=id)[0]
         # login(request, temp_trans_obj.stud_id.stud_map.user)
         if int(status) == 2:
